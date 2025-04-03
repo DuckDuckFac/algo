@@ -8,25 +8,25 @@ dfs로 수를 하나씩 붙여야 함.
 
 '''
 def dfs(n):
-    global cnt
-
-    if len(num) == n:
-        cnt += 1
-        return
-
-    if len(num) < 1:
-        cnt += 1
-        return
+    global cnt,save
 
     if len(num) >= 2:
         if num[len(num)-1] >= num[len(num)-2]:
             return
-    cnt += 1
+
+    if len(num) == n:
+        cnt += 1
+        if cnt == N:
+            save = num
+            flag = True
+            return
+        return
+
     for i in range(10):
         num.append(i)
-        dfs()
-        num.pop(0)
-
+        dfs(n)
+        num.pop()
+# 전체 함수가 리턴 되어야 함 근데 그게 안 되고 있음.
 
 N = int(input())
 num = []
@@ -36,3 +36,4 @@ for n in range(1,11):
     dfs(n)
     if flag == True:
         break
+print(save)
