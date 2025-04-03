@@ -1,1 +1,1 @@
-# algo
+Duck Algo !
