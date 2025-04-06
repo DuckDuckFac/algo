@@ -25,6 +25,7 @@ for < L 만큼 돌면서
 '''
 dr = [0,1,0,-1]
 dc = [1,0,-1,0] # 우 하 좌 상
+
 N = int(input())
 K = int(input())
 graph = [[0]*N for _ in range(N)]
@@ -32,46 +33,83 @@ graph[0][0] = 2 # 뱀
 snake_len = 1 # 뱀 길이
 snake = [[0,0]]
 dir = 0
-time = 0
+
 flag = False # 부딪혔냐의 flag
 for _ in range(K):
     x, y = map(int,input().split())
     graph[x-1][y-1] = 1 # 사과 : 1
 
 L = int(input())
+moving = []
 for _ in range(L):
-    move, turn = input().split()
-    M = 0
-    hr, hc = snake[0] # snake의 머리
-    nr, nc = hr + dr[dir], hc + dc[dir]
-    if nr < 0 or nr >= N or nc < 0 or nc >= N or ([nr,nc] in snake):
-        flag = True
+    a, b = input().split()
+    moving.append((a,b))
+
+time = 0
+for move, turn in moving:
+    cur_move = int(move) - time
+    for _ in range(cur_move):
+        hr, hc = snake[0] # snake의 머리
+        nr, nc = hr + dr[dir], hc + dc[dir]
+        if nr < 0 or nr >= N or nc < 0 or nc >= N or graph[nr][nc] == 2:
+            flag = True
+            break
+
+        if graph[nr][nc] == 1: # 사과를 만난 경우
+            snake_len += 1
+            snake.append([0,0])
+            for i in range(snake_len-1,0,-1):
+                snake[i][0], snake[i][1] = snake[i-1][0],snake[i-1][1]
+            snake[0][0] += dr[dir]
+            snake[0][1] += dc[dir]
+            graph[snake[0][0]][snake[0][1]] = 2
+
+        else: # 사과를 안 만난 경우
+            graph[snake[snake_len-1][0]][snake[snake_len-1][1]] = 0
+            for i in range(snake_len-1,0,-1):
+                snake[i][0], snake[i][1] = snake[i - 1][0], snake[i - 1][1]
+            snake[0][0] += dr[dir]
+            snake[0][1] += dc[dir]
+            graph[snake[0][0]][snake[0][1]] = 2
+
+        time += 1
+    if flag:
+
         break
 
-    if graph[nr][nc] == 1: # 사과를 만난 경우
-        snake_len += 1
-        snake.append([0,0])
-        for i in range(snake_len-1,0,-1):
-            snake[i][0], snake[i][1] = snake[i-1][0],snake[i-1][1]
-        snake[0][0] += dr[dir]
-        snake[0][1] += dc[dir]
-        graph[snake[0][0]][snake[0][1]] = 2
-    else: # 사과를 안 만난 경우
-        graph[snake[snake_len-1][0]][snake[snake_len-1][1]] = 0
-        for i in range(snake_len-1,0,-1):
-            snake[i][0], snake[i][1] = snake[i - 1][0], snake[i - 1][1]
-        snake[0][0] += dr[dir]
-        snake[0][1] += dc[dir]
-        graph[snake[0][0]][snake[0][1]] = 2
-    M += 1
-    time += 1
-    if flag:
-        print(time)
-        break
     if turn == 'L':
         dir = (dir+3)%4
     elif turn == 'D':
         dir = (dir+1)%4
+
+while True:
+    hr, hc = snake[0]  # snake의 머리
+    nr, nc = hr + dr[dir], hc + dc[dir]
+    if nr < 0 or nr >= N or nc < 0 or nc >= N or graph[nr][nc] == 2:
+        flag = True
+        print(time + 1)
+        break
+
+    if graph[nr][nc] == 1:  # 사과를 만난 경우
+        snake_len += 1
+        snake.append([0, 0])
+        for i in range(snake_len - 1, 0, -1):
+            snake[i][0], snake[i][1] = snake[i - 1][0], snake[i - 1][1]
+        snake[0][0] += dr[dir]
+        snake[0][1] += dc[dir]
+        graph[snake[0][0]][snake[0][1]] = 2
+
+    else:  # 사과를 안 만난 경우
+        graph[snake[snake_len - 1][0]][snake[snake_len - 1][1]] = 0
+        for i in range(snake_len - 1, 0, -1):
+            snake[i][0], snake[i][1] = snake[i - 1][0], snake[i - 1][1]
+        snake[0][0] += dr[dir]
+        snake[0][1] += dc[dir]
+        graph[snake[0][0]][snake[0][1]] = 2
+    time += 1
+
+
+
 
 
 
